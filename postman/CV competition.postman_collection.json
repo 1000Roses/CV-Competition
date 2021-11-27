@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "9ae490ec-6023-4070-b67f-f07d47cd1364",
+		"name": "CV competition",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "sign up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"vantien@gmail.com\",\n    \"username\": \"vantien\",\n    \"birthday\": \"2000-10-27\",\n    \"address\": \"\",\n    \"sex\": \"male\",\n    \"phone\": \"0123456282\",\n    \"password\": \"password\",\n    \"password2\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/signup/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"vantien@gmail.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/login/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cv",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJ2YW50aWVuQGdtYWlsLmNvbSIsImV4cCI6MTYzODA2OTMwOX0.X5AVPmMmIBAD_8LJuPHQPipIhCYSOcOlUjAwJSUr2CI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"name\": \"CV for vv job\",\n    \"section\": [\n        {\n            \"name\": \"Education\",\n            \"column\": \"right\",\n            \"sub_section\": [\n                {\n                    \"name\": \"University\",\n                    \"content\": [\n                        {\n                            \"content\" : \"2018-2022: time to study\"\n                        },\n                        {\n                            \"content\" : \"2022-2024: study advance\"\n                        }\n                        \n                        \n                    ]\n                },\n                {\n                    \"name\": \"International scholarship\",\n                    \"content\": [\n                        {\n                            \"content\" : \"2024-2025: Brinhamton University\"\n                        }\n                        \n                    ]\n                }\n            ]\n        },\n        {\n            \"name\": \"Skills\",\n            \"column\": \"right\",\n            \"sub_section\": [\n                {\n                    \"name\": \"python\",\n                    \"content\": []\n                },\n                {\n                    \"name\": \"java\",\n                    \"content\": []\n                }\n            ]\n        }\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/cv/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"cv",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/cv/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"cv",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJ2YW50aWVuQGdtYWlsLmNvbSIsImV4cCI6MTYzODA2OTMwOX0.X5AVPmMmIBAD_8LJuPHQPipIhCYSOcOlUjAwJSUr2CI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"name\": \"CV for vvvv job\",\n    \"section\": [\n        {\n            \"name\": \"Education\",\n            \"column\": \"right\",\n            \"sub_section\": [\n                {\n                    \"name\": \"University\",\n                    \"content\": [\n                        {\n                            \"content\" : \"2022-2024: study advance\"\n                        },\n                        {\n                            \"content\" : \"2018-2022: time to study\"\n                        }\n                    ]\n                },\n                {\n                    \"name\": \"International scholarship\",\n                    \"content\": [\n                        {\n                            \"content\" : \"2024-2025: Brinhamton University\"\n                        }\n                        \n                    ]\n                }\n            ]\n        },\n        {\n            \"name\": \"Skulls\",\n            \"column\": \"right\",\n            \"sub_section\": [\n                {\n                    \"name\": \"python\",\n                    \"content\": []\n                },\n                {\n                    \"name\": \"java\",\n                    \"content\": []\n                }\n            ]\n        },\n        {\n            \"name\": \"Certification\",\n            \"column\": \"left\",\n            \"sub_section\": [\n                {\n                    \"name\": \"Python hackerrank intermediate\",\n                    \"content\": []\n                },\n                {\n                    \"name\": \"teaching certifiacation advance\",\n                    \"content\": []\n                },\n                {\n                    \"name\": \"specialist in talking\",\n                    \"content\": [\n                        {\n                            \"content\": \"ability highly access\"\n                        },\n                        {\n                            \"content\": \"ability shut down Trung's mouth\"\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/cv/9/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"cv",
+								"9",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrieve",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/cv/9/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"cv",
+								"9",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
