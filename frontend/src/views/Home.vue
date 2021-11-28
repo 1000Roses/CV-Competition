@@ -12,12 +12,11 @@
         
         <div class="col-span-1 left">
           <draggable
-          
             :list="cv.leftData"
-          
             group="people"
-            
             item-key="name"
+            @start="dragging = true"
+            @end="dragging = false"
           >
           <!-- element is section -->
             <template #item="{ element }">  
@@ -39,10 +38,11 @@
         </div>
         <div class="col-span-1 right"> 
           <draggable
-          
-            :list="cv.rightData"    
+            :list="cv.rightData"
             item-key="name"
             group="people"
+            @start="dragging = true"
+            @end="dragging = false"
           >
           <!-- element is section -->
             <template #item="{ element }">  
@@ -67,11 +67,12 @@
     <br>
   </div>
 
-  
 </template>
 
 <script>
 import draggable from "vuedraggable";
+import { CVService } from '../services'
+
 export default {
     components: { draggable },
     data(){
@@ -82,7 +83,8 @@ export default {
           leftData : []
         },
         dataUpdate: [],
-        controlOnStart: true
+        controlOnStart: true,
+        dragging: false
       }
     },
     methods : {
@@ -95,30 +97,16 @@ export default {
       start({ originalEvent }) {
        this.controlOnStart = originalEvent.ctrlKey;
       },
-      async fetchCv(){
-        var url = 'http://127.0.0.1:8000/cv/9/'
-        const response = await fetch(url,{
-          method: 'GET'
-        })  
-        if (response.ok && response.status === 200){
-          this.dataUpdate = await response.json()
-          this.cv.name = this.dataUpdate.name
-          for (var section of this.dataUpdate.section){
-            if (section.column == 'right'){
-              this.cv.rightData.push(section)
-            }else{
-              this.cv.leftData.push(section)
-            }
-      
+      async fetchCv() {
+        this.dataUpdate = await CVService.getCV(9)
+        this.cv.name = this.dataUpdate.name
+        for (var section of this.dataUpdate.section){
+          if (section.column == 'right'){
+            this.cv.rightData.push(section)
+          } else {
+            this.cv.leftData.push(section)
           }
         }
-      },
-      waitTime(){
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve()
-          }, 1000)
-        })
       },
       async syncDataUpdate(){
         for (var i = 0; i < this.cv.leftData.length; i++){
@@ -127,33 +115,24 @@ export default {
         for (i = 0; i < this.cv.rightData.length; i++){
           this.cv.rightData[i].column = "right"
         }
-        console.log(this.cv.leftData)
-        console.log(this.cv.rightData)
         const synccore = () => {
           return this.cv.leftData.concat(this.cv.rightData)
         }
         this.dataUpdate.section = synccore()
-        console.log(this.dataUpdate.section)
       },
-      async updateCv(){
+      async updateCv() {
+        if (this.dragging === true) {
+          return
+        }
         await this.syncDataUpdate()
-        var url = 'http://127.0.0.1:8000/cv/9/'
-        const response = await fetch(url,{
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJ2YW50aWVuQGdtYWlsLmNvbSIsImV4cCI6MTYzODA2OTMwOX0.X5AVPmMmIBAD_8LJuPHQPipIhCYSOcOlUjAwJSUr2CI"
-          },
-          body: JSON.stringify(this.dataUpdate)
-        })  
-        return response.json()
-      }
+        await CVService.updateCV(9, this.dataUpdate)
+      },
     },
     created(){
       this.fetchCv()
     },
     watch : {
-      "cv" : {
+      "dragging" : {
         immediate: true,
         deep: true,
         handler(){
