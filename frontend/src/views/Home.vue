@@ -1,72 +1,104 @@
 <template>
   <div class="bg-body py-5">
-      <br>
-      <div class="w-1/2 mx-auto grid grid-cols-2 bg-cv py-5 px-8">
-        <div class="col-span-2 mb-5"> 
-            <div class= "">
-                <img src="https://i.imgur.com/uQxk5IK.png"  alt="" class="rounded-full object-cover mx-auto">
-                <p class="text-center p-2 text-3xl font-semibold">LE VAN TIEN</p>
-                <code class="flex justify-center" > Web, ML developer </code>
+    <br>
+    <div class="w-1/2 mx-auto grid grid-cols-2 bg-cv py-5 px-8">
+      <div class="col-span-2 mb-5"> 
+        <div class="">
+          <img
+            src="https://i.imgur.com/uQxk5IK.png"
+            alt=""
+            class="rounded-full object-cover mx-auto"
+          >
+          <p class="text-center p-2 text-3xl font-semibold">
+            LE VAN TIEN
+          </p>
+          <code class="flex justify-center"> Web, ML developer </code>
+        </div>
+      </div>
+        
+      <div class="col-span-1 left">
+        <draggable
+          :list="cv.leftData"
+          group="people"
+          item-key="name"
+          @start="dragging = true"
+          @end="dragging = false"
+        >
+          <!-- element is section -->
+          <template #item="{ element }">  
+            <div>
+              <p class="text-2xl font-bold">
+                {{ element.name }}
+              </p>
+              <div
+                v-for="subSection in element.sub_section"
+                :key="subSection"
+                class="ml-4"
+              >
+                <p class="text-xl font-semibold p-2">
+                  {{ subSection.name }}
+                </p>
+                <ul>
+                  <li
+                    v-for="content in subSection.content"
+                    :key="content"
+                  > 
+                    <div
+                      v-if="content.content != ''"
+                      class="ml-4 p-2"
+                    > 
+                      <font-awesome-icon icon="code" /> {{ content.content }}
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
-        </div>
-        
-        <div class="col-span-1 left">
-          <draggable
-            :list="cv.leftData"
-            group="people"
-            item-key="name"
-            @start="dragging = true"
-            @end="dragging = false"
-          >
+          </template>
+        </draggable>
+      </div>
+      <div class="col-span-1 right"> 
+        <draggable
+          :list="cv.rightData"
+          item-key="name"
+          group="people"
+          @start="dragging = true"
+          @end="dragging = false"
+        >
           <!-- element is section -->
-            <template #item="{ element }">  
-              <div>
-                <p class="text-2xl font-bold"> {{ element.name }} </p>
-                <div class="ml-4" v-for="subSection in element.sub_section" :key="subSection">
-                  <p class="text-xl font-semibold p-2"> {{ subSection.name }} </p>
-                  <ul>
-                    <li v-for="content in subSection.content" :key="content"> 
-                      <div v-if="content.content != ''" class="ml-4 p-2"> 
-                        <font-awesome-icon  icon="code" /> {{ content.content }}
-                      </div>
-                    </li>
-                  </ul>
-                </div>
+          <template #item="{ element }">  
+            <div>
+              <p class="text-2xl font-bold">
+                {{ element.name }}
+              </p>
+              <div
+                v-for="subSection in element.sub_section"
+                :key="subSection"
+                class="ml-4"
+              >
+                <p class="text-xl font-semibold p-2">
+                  {{ subSection.name }}
+                </p>
+                <ul>
+                  <li
+                    v-for="content in subSection.content"
+                    :key="content"
+                  > 
+                    <div
+                      v-if="content.content != ''"
+                      class="ml-4 p-2"
+                    > 
+                      <font-awesome-icon icon="code" /> {{ content.content }}
+                    </div>
+                  </li>
+                </ul>
               </div>
-            </template>
-          </draggable>
-        </div>
-        <div class="col-span-1 right"> 
-          <draggable
-            :list="cv.rightData"
-            item-key="name"
-            group="people"
-            @start="dragging = true"
-            @end="dragging = false"
-          >
-          <!-- element is section -->
-            <template #item="{ element }">  
-              <div>
-                <p class="text-2xl font-bold"> {{ element.name }} </p>
-                <div class="ml-4" v-for="subSection in element.sub_section" :key="subSection">
-                  <p class="text-xl font-semibold p-2"> {{ subSection.name }} </p>
-                  <ul>
-                    <li v-for="content in subSection.content" :key="content"> 
-                      <div v-if="content.content != ''" class="ml-4 p-2"> 
-                        <font-awesome-icon icon="code" /> {{ content.content }}
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </template>
-          </draggable>
-        </div>
-        
+            </div>
+          </template>
+        </draggable>
+      </div>
     </div>
     <br>
   </div>
-
 </template>
 
 <script>
@@ -86,6 +118,18 @@ export default {
         controlOnStart: true,
         dragging: false
       }
+    },
+    watch : {
+      "dragging" : {
+        immediate: true,
+        deep: true,
+        handler(){
+          this.updateCv()
+        }
+      },
+    },
+    created(){
+      this.fetchCv()
     },
     methods : {
       clone({ name }) {
@@ -126,18 +170,6 @@ export default {
         }
         await this.syncDataUpdate()
         await CVService.updateCV(9, this.dataUpdate)
-      },
-    },
-    created(){
-      this.fetchCv()
-    },
-    watch : {
-      "dragging" : {
-        immediate: true,
-        deep: true,
-        handler(){
-          this.updateCv()
-        }
       },
     }
 }
