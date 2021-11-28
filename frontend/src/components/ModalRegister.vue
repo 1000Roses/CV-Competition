@@ -98,6 +98,22 @@
         <div>
           <label
             class="block text-gray-700 text-lg font-bold mb-2"
+            for="phone"
+          >
+            Số điện thoại
+          </label>
+          <input
+            id="phone"
+            v-model="data.phone"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="tel"
+            placeholder="Số điện thoại"
+            required
+          >
+        </div>
+        <div>
+          <label
+            class="block text-gray-700 text-lg font-bold mb-2"
             for="sex"
           >
             Giới tính
@@ -162,20 +178,22 @@
 </template>
 
 <script>
+import { AuthService } from '../services'
+
 export default {
 	data(){
 		return{
 			show: false,
-            data: {
-                email: "",
-                username: "",
-                birthday: "",
-                address: "",
-                sex: "male",
-                phone: "",
-                password: "",
-                password2: ""
-            }
+      data: {
+        email: "",
+        username: "",
+        birthday: "",
+        address: "",
+        sex: "male",
+        phone: "",
+        password: "",
+        password2: ""
+      }
 		}
 	},
 	methods: {
@@ -184,33 +202,24 @@ export default {
 		},
 		closeModal(){
 			this.show = false;
-            this.data = {
-                email: "",
-                username: "",
-                birthday: "",
-                address: "",
-                sex: "male",
-                phone: "",
-                password: "",
-                password2: ""
-            }
+      this.data = {
+        email: "",
+        username: "",
+        birthday: "",
+        address: "",
+        sex: "male",
+        phone: "",
+        password: "",
+        password2: ""
+      }
 		},
-        async register(event){
-            event.preventDefault();
-            const url = 'http://127.0.0.1:8000/user/signup/';
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers:{
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(this.data)
-            })
-
-            if(response.ok && response.status === 200){
-                this.closeModal()
-            }
-        }  
-    },
+    async register(event){
+      event.preventDefault();
+      const response = await AuthService.register(this.data)
+      if (response.email) {
+        this.closeModal()
+      }
+    }
+  },
 }
 </script>

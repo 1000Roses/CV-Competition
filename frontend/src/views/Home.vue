@@ -152,6 +152,13 @@ export default {
           }
         }
       },
+      async updateCv() {
+        if (this.dragging === true) {
+          return
+        }
+        await this.syncDataUpdate()
+        await CVService.updateCV(9, this.dataUpdate)
+      },
       async syncDataUpdate(){
         for (var i = 0; i < this.cv.leftData.length; i++){
           this.cv.leftData[i].column = "left"
@@ -163,13 +170,6 @@ export default {
           return this.cv.leftData.concat(this.cv.rightData)
         }
         this.dataUpdate.section = synccore()
-      },
-      async updateCv() {
-        if (this.dragging === true) {
-          return
-        }
-        await this.syncDataUpdate()
-        await CVService.updateCV(9, this.dataUpdate)
       },
     }
 }

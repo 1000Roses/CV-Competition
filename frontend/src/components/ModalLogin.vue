@@ -84,14 +84,16 @@
 </template>
 
 <script>
+import { AuthService } from '../services'
+
 export default {
 	data(){
 		return{
 			show: false,
-            data: {
-                email: "",
-                password: ""
-            }
+      data: {
+        email: "",
+        password: ""
+      }
 		}
 	},
 	methods: {
@@ -101,31 +103,18 @@ export default {
 		closeModal(){
 			this.show = false;
 		},
-        async login(event){
-            event.preventDefault();
-            const url = 'http://127.0.0.1:8000/user/login/';
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers:{
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(this.data)
-            })
-
-            if(response.ok && response.status === 200){
-                const result = await response.json()
-                console.log(result)
-                if(result.error){
-                    console.log(result);
-                }else{
-                    this.$store.commit('storeAccessToken', result.access_token)
-                    this.$store.commit('storeIdUser', result.user_id)
-                    this.closeModal()
-                }
-            }
-
-        }  
+    async login(event){
+      event.preventDefault();
+      const result = await AuthService.login(this.data)
+      if (result.error) {
+        console.log(result);
+      } else {
+        localStorage.setItem('access_token', result.access_token)
+        this.$store.commit('storeAccessToken', result.access_token)
+        this.$store.commit('storeIdUser', result.user_id)
+        this.closeModal()
+      }
+    }  
     },
 }
 </script>

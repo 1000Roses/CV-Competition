@@ -3,7 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     idUser: "",
-    accessToken : "",
+    accessToken : localStorage.getItem('access_token') || '',
     accountType : ""
   },
   mutations: {

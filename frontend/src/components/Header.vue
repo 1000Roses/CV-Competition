@@ -37,36 +37,38 @@
 <script>
 import ModalLogin from '../components/ModalLogin.vue'
 import ModalRegister from '../components/ModalRegister.vue'
+
 export default {
-    components:{
-        ModalLogin,
-        ModalRegister
-    },
-    data(){
-        return{
-            login: false
-        }
-    },
-    watch : {
-        '$store.state.accessToken' : function(){
-            if (this.$store.state.accessToken != ""){
-                this.login = true
-            }
-        }
-    },
-    methods:{
-        openLogin(){
-            this.$refs.loginmodal.openModal()
-        },
-        openRegister(){
-            this.$refs.registermodal.openModal()
-        },
-        logout(){
-            this.$store.commit('resetToken');
-            this.$store.commit('resetIdUser');
-            this.login = false;
-            this.$router.push({name:'Home'});
+  components:{
+    ModalLogin,
+    ModalRegister
+  },
+  data() {
+    return{
+        login: this.$store.state.accessToken !== ""
+    }
+  },
+  watch : {
+    '$store.state.accessToken' : function(){
+        if (this.$store.state.accessToken !== ""){
+            this.login = true
         }
     }
+  },
+  methods:{
+    openLogin(){
+        this.$refs.loginmodal.openModal()
+    },
+    openRegister(){
+        this.$refs.registermodal.openModal()
+    },
+    logout(){
+      localStorage.removeItem('access_token')
+      this.$store.commit('resetToken');
+      this.$store.commit('resetIdUser');
+      this.login = false;
+      this.$router.push({name:'Home'});
+    }
+  }
 }
 </script>

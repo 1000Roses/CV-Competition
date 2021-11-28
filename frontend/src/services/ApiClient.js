@@ -2,7 +2,7 @@ const API_URL = process.env.VUE_APP_API_URL
 
 class ApiClient {
   constructor() {
-    this.token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwidHlwZSI6ImFjY2Vzc190b2tlbiIsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJ2YW50aWVuQGdtYWlsLmNvbSIsImV4cCI6MTYzODE2OTg2M30.AFANXSYpS22W7MVvRvHf-BJGl49-oT1O5osHQyqBcvU'
+    this.token = localStorage.getItem('access_token') || ''
   }
 
   async get(endpoint) {
