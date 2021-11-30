@@ -1,11 +1,16 @@
 const API_URL = process.env.VUE_APP_API_URL
 
+function getToken() {
+  return localStorage.getItem('access_token') || ''
+}
+
 class ApiClient {
   constructor() {
-    this.token = localStorage.getItem('access_token') || ''
+    this.token = ''
   }
 
   async get(endpoint) {
+    this.token = getToken()
     const response = await fetch(`${API_URL}${endpoint}`, {
       headers: { Authorization: `Bearer ${this.token}` },
     })
@@ -13,6 +18,7 @@ class ApiClient {
   }
 
   async post(endpoint, data) {
+    this.token = getToken()
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'POST',
       headers: {
@@ -25,6 +31,7 @@ class ApiClient {
   }
 
   async put(endpoint, data) {
+    this.token = getToken()
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'PUT',
       headers: {
@@ -37,6 +44,7 @@ class ApiClient {
   }
 
   async delete(endpoint) {
+    this.token = getToken()
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${this.token}` },
