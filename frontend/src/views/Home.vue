@@ -1,7 +1,10 @@
 <template>
   <div class="bg-body py-5">
     <br>
-    <div class="w-1/2 mx-auto grid grid-cols-2 bg-cv py-5 px-8">
+    <div
+      id="cv"
+      class="m-0 m-auto box-border grid grid-cols-2 bg-white"
+    >
       <div class="col-span-2 mb-5"> 
         <div class="">
           <img
@@ -102,7 +105,7 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
+import draggable from "vuedraggable"
 import { CVService } from '../services'
 
 export default {
@@ -174,3 +177,11 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+#cv {
+  padding: 0.3in;
+  width: 8.3in;
+  height: 11.7in;
+}
+</style>

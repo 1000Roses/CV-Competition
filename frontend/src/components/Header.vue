@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-header p-4">
+  <div class="p-4">
     <div class="flex mx-auto justify-between px-4">
       <div class="text-2xl font-semibold py-3">
         <div class="">

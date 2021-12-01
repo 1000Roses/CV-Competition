@@ -5,9 +5,7 @@ module.exports = {
     extend: {},
     backgroundColor: theme => ({
       ...theme('colors'),
-      'header': '#13EC44',
-      "cv"    : "#f8fff0",
-      "body"  : "#18e7a9"
+      "body"  : "#f6f6f6"
      })
   },
   variants: {
