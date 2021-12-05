@@ -1,34 +1,55 @@
 <template>
   <div class="bg-body py-5">
     <br>
+    <button class="fixed right-10 bottom-20 bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 rounded" @click="savePDF">Save PDF</button>
     <div
       id="cv"
-      class="m-0 m-auto box-border grid grid-cols-2 bg-white"
+      class="m-0 m-auto box-border grid grid-cols-3 bg-white"
     >
-      <div class="col-span-2 mb-5"> 
-        <div class="">
-          <img
-            src="https://i.imgur.com/uQxk5IK.png"
-            alt=""
-            class="rounded-full object-cover mx-auto"
-          >
-          <p class="text-center p-2 text-3xl font-semibold">
-            LE VAN TIEN
+      <div class="col-span-3 h-full"> 
+        <div>
+          <div class="flex flex-col items-center ">
+            <div class="relative image flex items-center" @click="this.$refs.inputImage.click()">
+              <img
+                :src="srcImage"
+                alt=""
+                class="rounded-full object-cover image-profile"
+              >
+              <img src="../assets/h.png" class="absolute left-20 image-camera">
+              <input ref="inputImage" accept="image/*" v-on:change="uploadImage" type="file" name="image-profile" hidden/>
+            </div>
+          </div>
+          <p class="text-center p-2 text-3xl font-semibold" contenteditable="true" placeholder="Name">
+            {{profile_name}}
           </p>
-          <code class="flex justify-center"> Web, ML developer </code>
+          <code class="flex justify-center" contenteditable="true" placeholder="Position"> 
+            {{major}}
+          </code>
         </div>
       </div>
         
-      <div class="col-span-1 left">
-        <draggable
+      <div class="col-span-1 left w-4/5">
+        <div class="mb-2">
+          <contact></contact>
+        </div>
+        <div class="mb-2">
+          <skill></skill>
+        </div>
+        <div class="mb-2">
+          <language></language>
+        </div>
+        <div class="mb-2">
+          <prize></prize>
+        </div>
+        <div></div>
+        <!-- <draggable
           :list="cv.leftData"
           group="people"
           item-key="name"
           @start="dragging = true"
           @end="dragging = false"
         >
-          <!-- element is section -->
-          <template #item="{ element }">  
+          <template #item="{ element }">
             <div>
               <p class="text-2xl font-bold">
                 {{ element.name }}
@@ -57,17 +78,28 @@
               </div>
             </div>
           </template>
-        </draggable>
+        </draggable> -->
       </div>
-      <div class="col-span-1 right"> 
-        <draggable
+      <div class="col-span-2 right ml-4"> 
+        <div class="mb-2">
+          <about-me></about-me>
+        </div >
+        <div class="mb-2">
+          <work-ex></work-ex>
+        </div>
+        <div class="mb-2">
+          <education></education>
+        </div>
+        <div class="mb-2">
+          <project></project>
+        </div>
+        <!-- <draggable
           :list="cv.rightData"
           item-key="name"
           group="people"
           @start="dragging = true"
           @end="dragging = false"
         >
-          <!-- element is section -->
           <template #item="{ element }">  
             <div>
               <p class="text-2xl font-bold">
@@ -97,7 +129,7 @@
               </div>
             </div>
           </template>
-        </draggable>
+        </draggable> -->
       </div>
     </div>
     <br>
@@ -105,13 +137,27 @@
 </template>
 
 <script>
-import draggable from "vuedraggable"
+// import draggable from "vuedraggable"
 import { CVService } from '../services'
+import jsPDF from "jspdf"
+import html2canvas from 'html2canvas';
+import Skill from '../components/Skill/Skill.vue'
+import Contact from '../components/Contact/Contact.vue'
+import Language from '../components/Language/Language.vue'
+import Prize from '../components/Prize/Prize.vue'
+import AboutMe from '../components/AboutMe/AboutMe.vue'
+import WorkEx from '../components/WorkExperience/WorkExperience.vue'
+import Education from '../components/Education/Education.vue'
+import Project from '../components/Project/Project.vue'
 
 export default {
-    components: { draggable },
     data(){
       return {
+        srcImage:"",
+        save: false,
+        download: false,
+        profile_name: "Nguyễn Việt Trung",
+        major: "Web Developer",
         cv: {
           name : "",
           rightData: [],
@@ -119,20 +165,31 @@ export default {
         },
         dataUpdate: [],
         controlOnStart: true,
-        dragging: false
+        dragging: false,
       }
     },
-    watch : {
-      "dragging" : {
-        immediate: true,
-        deep: true,
-        handler(){
-          this.updateCv()
-        }
-      },
+    components:{
+      Skill,
+      Contact,
+      Language,
+      Prize,
+      AboutMe,
+      WorkEx,
+      Education,
+      Project
     },
-    created(){
-      this.fetchCv()
+    watch : {
+      // "dragging" : {
+      //   immediate: true,
+      //   deep: true,
+      //   handler(){
+      //     this.updateCv()
+      //   }
+      // },
+    },
+    async created(){
+      // await this.fetchCv();
+      // this.savePDF()
     },
     methods : {
       clone({ name }) {
@@ -146,6 +203,7 @@ export default {
       },
       async fetchCv() {
         this.dataUpdate = await CVService.getCV(9)
+        console.log(this.dataUpdate)
         this.cv.name = this.dataUpdate.name
         for (var section of this.dataUpdate.section){
           if (section.column == 'right'){
@@ -154,6 +212,7 @@ export default {
             this.cv.leftData.push(section)
           }
         }
+        // await this.svgToCanvas();
       },
       async updateCv() {
         if (this.dragging === true) {
@@ -174,7 +233,40 @@ export default {
         }
         this.dataUpdate.section = synccore()
       },
+      async savePDF(){
+        this.save = true;
+        this.download = true;
+        const pdf = new jsPDF({
+            format: "a4",
+            orientation: "portrait",
+            unit: "mm"
+        });
+        // pdf.html(document.getElementById('cv'), {
+        //     html2canvas: {
+        //         scale: 0.565 // default is window.devicePixelRatio
+        //     },
+        //     callback: function () {
+        //         // pdf.save('test.pdf');
+        //     }
+        // });
+        
+        const canvas =  await html2canvas(document.querySelector("#cv"))
+        const imgData =  canvas.toDataURL('image/png');
+        const imgProps=  pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        // pdf.save(`CV-${new Date().toLocaleDateString("vi-VN")}.pdf`);
+        window.open(pdf.output('bloburl'));
+        this.save = false;
+         // to debug
+        // this.save = false;
+      },
+    uploadImage(event){
+      const file = event.target.files[0];
+      this.srcImage = URL.createObjectURL(file);
     }
+  }
 }
 </script>
 
@@ -183,5 +275,28 @@ export default {
   padding: 0.3in;
   width: 8.3in;
   height: 11.7in;
+}
+.image{
+  width: 210px;
+  height: 210px;
+  cursor: pointer;
+}
+.image:hover > .image-profile{
+  opacity: 0.2;
+  z-index: 0;
+}
+.image-profile{
+  z-index: 10;
+}
+.image-camera{
+  z-index: 0;
+  display: none;
+}
+</style>
+<style>
+[contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  color: gray;
+  background-color: transparent;
 }
 </style>
